@@ -1,4 +1,4 @@
-# PNB
+# Plan Nacional de Búsqueda
 Repositorio con códigos y datos utilizados por el equipo de diseño e implementación del Plan Nacional de Búsqueda de Víctimas de Desaparición Forzada en Chile
 
 ## Web scraping
