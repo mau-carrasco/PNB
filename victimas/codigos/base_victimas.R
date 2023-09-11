@@ -52,6 +52,17 @@ victimas <- victimas_pdh %>%
          tipo_caso = factor(tipo_caso, labels = c("DESAPARECIDO/A", "ASESINADO/A SIN ENTREGA DE CUERPO", "ASESINADO/A")))
 
 victimas <- victimas %>%
+  mutate(fecha_nacimiento = as.Date(fecha_nacimiento),
+         fecha_desaparicion_muerte = as.Date(fecha_desaparicion_muerte),
+         comision = case_when(comision == "CVR" ~ 1,
+                              comision == "CNRR" ~ 2,
+                              TRUE ~ 3),
+         comision = factor(comision, labels = c("CVR", "CNRR", "CPACDDEPVPPT")),
+         calificacion = factor(calificacion),
+         identificacion = factor(identificacion),
+         nacionalidad = factor(nacionalidad))
+
+victimas <- victimas %>%
   select(1:17, 19:21, 18)
 
 #### Guardado de base de datos ####
