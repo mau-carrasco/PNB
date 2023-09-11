@@ -61,7 +61,9 @@ victimas <- victimas %>%
          comision = factor(comision, labels = c("CVR", "CNRR", "CPACDDEPVPPT")),
          calificacion = factor(calificacion),
          identificacion = factor(identificacion),
-         nacionalidad = factor(nacionalidad))
+         nacionalidad = factor(nacionalidad),
+         militancia = factor(militancia),
+         cargo = factor(cargo))
 
 victimas <- victimas %>%
   select(1:17, 19:21, 18)
