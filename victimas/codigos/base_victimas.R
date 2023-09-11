@@ -5,6 +5,7 @@
 #### Paquetes ####
 library(tidyverse)
 library(readxl)
+library(labelled)
 
 #### Directorio de trabajo ####
 setwd("C:/Users/mauricio.carrasco/Desktop/PNB/victimas")
@@ -65,6 +66,38 @@ victimas <- victimas %>%
 victimas <- victimas %>%
   select(1:17, 19:21, 18)
 
+#### Etiquetas de variables ####
+
+var_label(victimas) <- list(
+  id = "Código único de víctima",
+  victima = "Nombre completo",
+  rut = "RUN",
+  fecha_nacimiento = "Fecha de nacimiento",
+  edad = "Años de edad al momento del secuestro o asesinato",
+  sexo = "Sexo registral",
+  nacionalidad = "Nacionalidad",
+  actividad = "Actividad principal",
+  tipo_actividad = "Tipo de actividad principal",
+  militancia = "Partido o movimiento político",
+  cargo = "Cargo público y/o político",
+  fecha_desaparicion_muerte = "Fecha de desaparición o muerte",
+  region = "Región donde ocurrió el secuestro o asesinato",
+  ciudad = "Ciudad donde ocurrió el secuestro o asesinato",
+  comuna = "Comuna donde ocurrió el secuestro o asesinato",
+  comision = "Comisión de la verdad que califica a la víctima",
+  calificacion = "Calificación",
+  tipo_caso = "Tipo de caso",
+  identificacion = "¿Víctima identificada?",
+  identificacion_det = "Detalle de la identificación",
+  relato = "Relato del caso"
+)
+
+libro_codigos <- look_for(victimas) %>% select(!value_labels)
+
 #### Guardado de base de datos ####
 
 openxlsx::write.xlsx(victimas, "C:/Users/mauricio.carrasco/Desktop/PNB/victimas/resultados/victimas.xlsx")
+
+write_rds(victimas, "C:/Users/mauricio.carrasco/Desktop/PNB/victimas/resultados/victimas.rds")
+
+openxlsx::write.xlsx(libro_codigos, "C:/Users/mauricio.carrasco/Desktop/PNB/victimas/resultados/libro_codigos.xlsx")
