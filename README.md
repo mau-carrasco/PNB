@@ -4,7 +4,7 @@ Repositorio con códigos y datos utilizados por el equipo de diseño e implement
 ## Víctimas
 En repositorio de **[victimas](https://github.com/mau-carrasco/PNB/tree/main/victimas)** están disponibles los códigos y los datos utilizados para construir la nómina oficial de víctimas de asesinato y desaparición forzada durante la dictadura civil militar (1973 - 1990). Este repositorio contiene las siguientes carpetas:
 - **Códigos**: Script de R con el trabajo de reconstrucción de la base de datos de víctimas de asesinato y desaparición forzada calificadas por las Comisiones de la Verdad (*N: 3.216*)
-- **Datos**: Archivos excel con: a) El listado de víctimas calificadas por las Comisiones de la Verdad, obtenido del sistema de datos del *Programa de Derechos Humanos* (PDH) del Ministerio de Justicia y Derechos Humanos; b) El listado de víctimas de desaparición forzda elaborado por el *Área de Investigación Administrativa* del PDH
+- **Datos**: Archivos excel con: a) El listado de víctimas calificadas por las Comisiones de la Verdad, obtenido del sistema de datos del *Programa de Derechos Humanos* (PDH) del Ministerio de Justicia y Derechos Humanos; b) El listado de víctimas de desaparición forzda elaborado por el *Área de Investigación Administrativa* del PDH (*N: 1.469*)
 - **Resultados**: Archivos Excel y RDS con la base de datos de víctimas obtenida a través del procesamiento masivo de información
 
 ## Web scraping
