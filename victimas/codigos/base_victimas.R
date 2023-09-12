@@ -21,7 +21,6 @@ victimas_df <- read_excel("datos/Víctimas-Desaparición-Forzada.xlsx")
 victimas_museo <- read_excel("C:/Users/mauricio.carrasco/Desktop/PNB/web_scraping_ddhh/resultados/base_museo.xlsx")
 
 #### Limpieza de bases de datos ####
-
 victimas_pdh <- victimas_pdh %>%
   select(id,
          victima = Víctima,
@@ -41,7 +40,6 @@ victimas_pdh <- victimas_pdh %>%
          tipo_actividad = factor(tipo_actividad))
 
 #### Unión de bases de datos ####
-
 victimas <- victimas_pdh %>%
   left_join(victimas_museo %>%
               select(id, fecha_desaparicion_muerte, region, ciudad, comuna, comision, calificacion, relato)) %>%
@@ -72,7 +70,6 @@ victimas <- victimas %>%
   select(1:17, 19:21, 18)
 
 #### Etiquetas de variables ####
-
 var_label(victimas) <- list(
   id = "Código único de víctima",
   victima = "Nombre completo",
@@ -100,9 +97,6 @@ var_label(victimas) <- list(
 libro_codigos <- look_for(victimas) %>% select(!value_labels)
 
 #### Guardado de base de datos ####
-
 openxlsx::write.xlsx(victimas, "C:/Users/mauricio.carrasco/Desktop/PNB/victimas/resultados/victimas.xlsx")
-
 write_rds(victimas, "C:/Users/mauricio.carrasco/Desktop/PNB/victimas/resultados/victimas.rds")
-
 openxlsx::write.xlsx(libro_codigos, "C:/Users/mauricio.carrasco/Desktop/PNB/victimas/resultados/libro_codigos.xlsx")
