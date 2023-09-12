@@ -8,7 +8,7 @@ library(readxl)
 library(labelled)
 
 #### Directorio de trabajo ####
-setwd("C:/Users/mauricio.carrasco/Desktop/PNB/victimas")
+setwd("C:/Users/mauricio.carrasco/Desktop/PNB/victimas/")
 
 #### Fuentes de información ####
 # Base de datos del Programa de Derechos Humanos - PDH
@@ -63,7 +63,10 @@ victimas <- victimas %>%
          identificacion = factor(identificacion),
          nacionalidad = factor(nacionalidad),
          militancia = factor(militancia),
-         cargo = factor(cargo))
+         cargo = factor(cargo),
+         region = factor(region),
+         ciudad = factor(ciudad),
+         comuna = factor(comuna))
 
 victimas <- victimas %>%
   select(1:17, 19:21, 18)
