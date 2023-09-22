@@ -69,6 +69,88 @@ victimas <- victimas %>%
 victimas <- victimas %>%
   select(1:17, 19:21, 18)
 
+#### Factorización regiones ####
+
+victimas <- victimas %>%
+  mutate(
+    region = case_when(
+      ciudad == "ARICA" ~ "XV Arica-Parinacota",
+      ciudad == "PUTRE" ~ "XV Arica-Parinacota",
+      ciudad == "VALDIVIA" ~ "XIV Los Ríos",
+      ciudad == "PANGUIPULLI" ~ "XIV Los Ríos",
+      ciudad == "RIO BUENO" ~ "XIV Los Ríos",
+      ciudad == "LA UNION" ~ "XIV Los Ríos",
+      ciudad == "LIQUIÑE" ~ "XIV Los Ríos",
+      ciudad == "NELTUME" ~ "XIV Los Ríos",
+      ciudad == "CHILLAN" ~ "XVI ÑUBLE",
+      ciudad == "CHILLÁN" ~ "XVI ÑUBLE",
+      ciudad == "COBQUECURA" ~ "XVI ÑUBLE",
+      ciudad == "COELEMU" ~ "XVI ÑUBLE",
+      ciudad == "COIHUECO" ~ "XVI ÑUBLE",
+      comuna == "CHILLAN" ~ "XVI ÑUBLE",
+      comuna == "PEMUCO" ~ "XVI ÑUBLE",
+      comuna == "COIHUECO" ~ "XVI ÑUBLE",
+      comuna == "BULNES" ~ "XVI ÑUBLE",
+      comuna == "COBQUECURA" ~ "XVI ÑUBLE",
+      ciudad == "NINHUE" ~ "XVI ÑUBLE",
+      ciudad == "ÑUBLE" ~ "XVI ÑUBLE",
+      ciudad == "SAN CARLOS" ~ "XVI ÑUBLE",
+      ciudad == "SAN NICOLAS" ~ "XVI ÑUBLE",
+      region == "XIV Arica-Parinacota" ~ "XV Arica-Parinacota",
+      region == "XV Los Lagos" ~ "XIV Los Ríos",
+      region == "RM METROPOLITANA" ~ "RM Metropolitana",
+      region == "-" ~ "Extranjero",
+      comuna == "PANGUIPULLI" ~ "XIV Los Ríos",
+      comuna == "LAGO RANCO" ~ "XIV Los Ríos",
+      comuna == "RIO BUENO" ~ "XIV Los Ríos",
+      comuna == "S.J.DE LA MARIQUINA" ~ "XIV Los Ríos",
+      comuna == "VALDIVIA" ~ "XIV Los Ríos",
+      comuna == "ZONA FRONTERIZA DE PAIMUN" ~ "XIV Los Ríos",
+      TRUE ~ region
+    )
+  ) %>%
+  mutate(
+    region = case_when(
+      region == "Extranjero" ~ 0,
+      region == "XV Arica-Parinacota" ~ 1,
+      region == "I Tarapacá" ~ 2,
+      region == "II Antofagasta" ~ 3,
+      region == "III Atacama" ~ 4,
+      region == "IV Coquimbo" ~ 5,
+      region == "V Valparaíso" ~ 6,
+      region == "RM Metropolitana" ~ 7,
+      region == "VI O`Higgins" ~ 8,
+      region == "VII Maule" ~ 9,
+      region == "XVI ÑUBLE" ~ 10,
+      region == "VIII Biobío" ~ 11,
+      region == "IX Araucanía" ~ 12,
+      region == "XIV Los Ríos" ~ 13,
+      region == "X Los Lagos" ~ 14,
+      region == "XI Aysén" ~ 15,
+      region == "XII Magallanes" ~ 16
+    )
+  ) %>%
+  mutate(
+    region = factor(region,
+                    labels = c("Extranjero",
+                               "Arica y Parinacota",
+                               "Tarapacá",
+                               "Antofagasta",
+                               "Atacama",
+                               "Coquimbo",
+                               "Valparaíso",
+                               "Metropolitana",
+                               "O`Higgins",
+                               "Maule",
+                               "Ñuble",
+                               "Biobío",
+                               "Araucanía",
+                               "Los Ríos",
+                               "Los Lagos",
+                               "Aysén",
+                               "Magallanes"))
+  )
+
 #### Etiquetas de variables ####
 var_label(victimas) <- list(
   id = "Código único de víctima",
