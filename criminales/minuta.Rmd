@@ -1,0 +1,168 @@
+---
+title: "MINUTA"
+subtitle: "Sobre proyecto que propone sustituir el lugar de cumplimiento de la pena privativa de libertad por la de reclusión domiciliaria total en los casos de personas mayores de 65 años, con enfermedad terminal o dependencia severa"
+date: "8 de enero de 2024"
+output: pdf_document
+lang: es
+header-includes:
+  - \usepackage{titling}
+  - \pretitle{\begin{center}
+    \includegraphics[width=1.5in,height=1.5in]{logo.png}\LARGE\\}
+  - \posttitle{\end{center}}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message = F, warning = F, fig.height=4, fig.width=9, fig.pos = 'H')
+#### Preámbulo ####
+
+
+# Carga de paquetes
+library(tidyverse)
+library(readxl)
+library(kableExtra)
+
+# Carga de datos del PDH
+agentes <- read_excel("20240104-Informe-historial-procesal-Agente.xlsx")
+causas <- read_excel("20240105-Informe-PJP.xlsx")
+
+#### Procesamiento de datos ####
+
+# Limpieza de base de datos de causas
+rol_causas <- causas %>%
+  filter(EstadoProc == "Sentencia condenatoria ejecut.") %>%
+  group_by(Rol) %>%
+  summarise(n = n()) %>%
+  ungroup()
+
+# Limpieza de base de datos de criminales
+agentes <- agentes %>%
+  select(Agente, Rama_Perteneciente, Rol, Estado_Procesal, Fecha, Delito, Condena) %>%
+  filter(Estado_Procesal %in% c("SENTENCIA 1° INST", "SENTENCIA 2° INST", "FONDO", "FORMA")) %>%
+  group_by(Agente, Rol) %>%
+  summarise(Rama_Perteneciente = last(Rama_Perteneciente),
+            Estado_Procesal = last(Estado_Procesal),
+            Fecha = last(Fecha),
+            Delito = last(Delito),
+            Condena = last(Condena)) %>%
+  ungroup()
+agentes <- agentes %>%
+  filter(Rol %in% c(paste0(rol_causas$Rol))) %>%
+  filter(grepl("Año|año|día|dia", Condena))
+
+n_distinct(agentes$Agente) # 923 agentes condenados
+n_distinct(agentes$Rol) # 513 sentencias definitivas
+
+agentes <- agentes %>%
+  mutate(
+    Homicidio = if_else(grepl("Homicidio|homicidio", Delito), 1, 0),
+    Secuestro = if_else(grepl("Secuestro|secuestro", Delito), 1, 0),
+    Tortura = if_else(grepl("tormentos|Apremios|apremios|Artículo 150 N°1 C.P.|Artículo N° 150 C.P.|Tortura|tortura|Torturas|torturas", Delito), 1, 0),
+    Asociacion_ilicita = if_else(grepl("Asociación ilícita|asoc. ilicita", Delito), 1, 0),
+    Otros = if_else(grepl("Exhumación Ilegal|iolencia innecesaria|iolencias innecesarias|Sustracción de menores|otros|Robo|Lesiones|lesiones|control de armas|Falso testimonio en causa criminal|Falsificación de instrumento público|etencion ilegal", Delito), 1, 0)
+         )
+
+agentes$Agente <- str_replace_all(string = agentes$Agente,
+                pattern = c("[(+*)]" = "",
+                            "C-" = ""))
+agentes$Agente <- str_squish(agentes$Agente)
+
+```
+
+## Introducción
+
+El pasado martes 2 de enero de 2023, la Comisión de Derechos Humanos del Senado aprobó el proyecto de ley que busca sustituir el lugar de cumplimiento de penas privativas de libertad por la de reclusión domiciliaria total en los casos de:
+ 
+- Personas condenadas que padezcan alguna enfermedad terminal, lo cuál deberá ser acreditado *mediante la certificación unánime e inequívoca de a lo menos tres médicos especialistas en el tratamiento de la respectiva enfermedad o condición patológica*;
+
+- Personas condenadas que padezcan, por cualquier causa, un menoscabo físico grave e irrecuperable que les provoque una dependencia severa, lo que deberá seguir la misma acreditación mencionada anteriormente;
+
+- Personas condenadas que tengan una determinada edad durante la ejecución de la condena. A partir de los 75 años y más para hombres condenados, mientras que para las mujeres será desde los 65 años en adelante.
+ 
+Dentro de los fundamentos del proyecto aprobado por la Comisión, se señala que esta *ley humanitaria* es extensible a la población penal condenada por delitos de lesa humanidad o de violación de los derechos humanos.
+
+## Temas de preocupación para la SSDDHH
+
+Habiendo revisado el contenido del proyecto en cuestión, la Subsecretaría de Derechos Humanos expresa su preocupación por la manera en cómo se está entendiedo la entrega de beneficios carcelario con fines humanitarios, y llama a los diputados y diputadas de la República a considerar los siguientes elementos de contexto en su tramitación parlamentaria:
+
+### 1. Las características de la población penal que podría acceder al beneficio
+
+Actualmente, en el sistema penitenciario sólo 265 personas de 75 años o más cumplen penas efectivas en recintos carcelarios, de las cuales 146 (el 55%) son civiles o agentes estatales condenados por delitos de lesa humanidad.[^1]
+
+```{r Figura 1, fig.cap="Proporción de la población carcelaria de 75 años o más, según tipo de delito cometido"}
+Figura_1 <- c(119, 146)
+
+pie(Figura_1, labels = c("Delitos comunes", "Crímenes de lesa humanidad"))
+
+```
+
+[^1]: Luis Cordero por enmienda republicana que busca excarcelar a mayores de 75 años de edad: “Creo que afecta el derecho internacional de los derechos humanos”. Disponible en: https://radio.uchile.cl/2023/07/19/luis-cordero-por-enmienda-republicana-que-busca-excarcelar-a-mayores-de-75-anos-de-edad-creo-que-afecta-el-derecho-internacional-de-los-derechos-humanos/
+
+## 2. Los delitos cometidos por los criminales de lesa humanidad
+
+La mayoría de los criminales de lesa humanidad acumula decenas de condenas por homicidio, secuestro, tortura, asociación ilícita y otros delitos graves perpetrados de manera sistemática y generalizada durante la dictadura civil militar (ver Tabla 1).
+
+```{r Tabla 1}
+# Tabla 2: Criminales por delito
+agentes %>%
+  group_by(Agente) %>%
+  summarise("Total condenas" = n_distinct(Rol),
+            Homicidio = n_distinct(Rol[Homicidio==1]),
+            Secuestro = n_distinct(Rol[Secuestro==1]),
+            Tortura = n_distinct(Rol[Tortura==1]),
+            "Asoc. ilíc." = n_distinct(Rol[Asociacion_ilicita==1]),
+            Otros = n_distinct(Rol[Otros==1])) %>%
+  arrange(desc(`Total condenas`)) %>%
+  head(10) %>%
+  kable(booktabs = T,
+        caption = "Ranking: Los 10 criminales de lesa humanidad con mayor número de condenas") %>%
+  kable_styling(full_width = T, latex_options = c("striped", "HOLD_position"), font_size = 7) %>% column_spec(1, width = "6cm") %>%
+  footnote(general = "Programa de Derechos Humanos",
+           general_title = "Fuente:")
+
+```
+
+### 3. La demora de las investigaciones penales por delitos de lesa humanidad
+
+La mayoría de los criminales condenados por delitos de lesa humanidad pasó varios años de democracia post autoritaria en la más absoluta impunidad, debido a la demora en el inicio de los procesos de rendición de cuentas judiciales y la lentitud de las causas procesadas por el sistema penal antiguo.
+
+De acuerdo con la información recopilada por el Programa de Derechos Humanos, las causas judiciales por crímenes de lesa humanidad tienen una duración promedio de 11,8 años, tomando en consideración la fecha de interposición de la primera querella y la fecha de emisión de la sentencia definitiva por parte de la Corte Suprema o Corte de Apelaciones correspondiente.[^2]
+
+En algunos casos, la investigación penal se ha extendido hasta por 32 años, gracias al uso de estrategias dilatorias por parte de la defensa de los criminales de lesa humanidad que, en vez de colaborar con el esclarecimiento de la verdad, buscaron generar impunidad biológica a través del ocultamiento o la entrega de información falsa sobre el paradero o destino final de los detenidos desaparecidos, o las circunstancia de muerte de los ejecutados políticos.
+
+```{r Figura 2, fig.cap="Sentencias condenatorias por crímenes de lesa humanidad en Chile (1990-2023)"}
+# Figura 1: Fecha de emisión de las setencias definitivas
+par(mfrow = c(1, 2))
+agentes %>%
+  mutate(Anno = lubridate::year(Fecha)) %>%
+  filter(Anno > 1989) %>%
+  group_by(Rol) %>%
+  summarise(Anno = last(Anno)) %>%
+  ungroup() %>%
+  count(Anno) %>%
+  plot(type = "h",
+       main = "Sentencias por año",
+       xlab = "Fecha", ylab = "N° de sentencias condenatorias")
+agentes %>%
+  mutate(Anno = lubridate::year(Fecha)) %>%
+  filter(Anno > 1989) %>%
+  group_by(Rol) %>%
+  summarise(Anno = last(Anno)) %>%
+  ungroup() %>%
+  count(Anno) %>%
+  mutate(Acum = cumsum(n)) %>%
+  select(!n) %>%
+  plot(type = "h",
+       main = "Sentencias acumuladas",
+       xlab = "Fecha", ylab = "N° de sentencias condenatorias acumuladas")
+par(mfrow = c(1, 1))
+```
+
+[^2]: Cabe destacar, que la duración promedio de las causas de crímenes de lesa humanidad es cinco o seis veces mayor que el periodo de duración establecido por el Poder Judicial para las causas que investigan delitos comunes. Esta diferencia en el tiempo y velocidad de la tramitación ha permitido que muchos de los violadores de derechos humanos mueran impunes.
+
+## 4. Lo establecido por el derecho internacional de los derechos humanos
+
+Según la Comisión Inteamericana de Derechos Humanos (CIDH), la entrega de beneficios carcelarios y la reducción de penas para los criminales de lesa humanidad puede ser procedente si el condenado ha realizado *"las acciones positivas y eficaces de colaboración destinadas a determinar la autoría de los delitos, sus circunstancias y móviles, el daño causado y –en su caso— localizar los restos de las víctimas"*. [^3]
+
+En este sentido, el derecho internacional es claro en señalar que toda medida carcelaria que beneficie a los victimarios de crímenes de lesa humanidad debe contemplar una forma de reparación del daño causado, orientada a disminuiir el sufrimiento de las víctimas y sus familiares, y brindar garantías de no repetición.
+
+[^3]: Es importante tener presente que la Convención sobre la imprescriptibilidad de los crímenes de guerra y de los crímenes de lesa humanidad, acordada en 1968 por las Naciones Unidas en base a la experiencia del Tribunal de Nuremberg, señala, a propósito de los delitos de lesa humanidad, que los Estados deben adoptar las *“medidas legislativas o de otra índole que fueran necesarias para que la prescripción de la acción penal o de la pena, establecida por ley o de otro modo, no se aplique a los crímenes mencionados en los artículos I y II de la presente Convención y, en caso de que exista, sea abolida”*.
